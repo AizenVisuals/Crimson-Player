@@ -33,12 +33,12 @@ class PlayerNavigationBar extends StatelessWidget {
             if (player != null && onOpenPlayer != null)
               MiniPlayer(player: player!, onOpen: onOpenPlayer!),
             Material(
-              color: context.isDark ? AppColors.graphite : context.canvas,
+              color: context.isDark
+                  ? const Color(0xFF861832)
+                  : const Color(0xFFB51232),
               elevation: 5,
               shadowColor: Colors.black.withValues(alpha: .2),
-              shape: StadiumBorder(
-                side: BorderSide(color: context.ink.withValues(alpha: .08)),
-              ),
+              shape: const StadiumBorder(),
               clipBehavior: Clip.antiAlias,
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 6),

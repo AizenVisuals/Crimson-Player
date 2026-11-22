@@ -1,6 +1,34 @@
 # Online music: technical feasibility
 
-Research date: **2026-11-22**. This documents research, **not shipped integrations**.
+Research date: **2026-11-22**. The Android implementation exposes optional
+catalog connections under Settings and Search. Builds need provider
+configuration before these can connect to live accounts.
+
+## Android configuration
+
+- Set `SPOTIFY_CLIENT_ID` to the Spotify developer app's public client ID.
+  Register `http://127.0.0.1/callback` as its redirect URI. The app uses an
+  ephemeral loopback port, the system browser and PKCE. Development-mode
+  accounts must be authorized in the Spotify dashboard.
+- Optionally set `SPOTIFY_PUBLIC_TOKEN_URL` to your HTTPS endpoint returning
+  `{"access_token":"..."}` from Spotify Client Credentials for public search.
+  Keep the client secret on that server and limit access and request rates
+  according to your Spotify application policy.
+- Set `GOOGLE_SERVER_CLIENT_ID` to the Google OAuth web client ID. Enable
+  YouTube Data API v3 and register an Android OAuth client for
+  `com.aizenvisuals.crimson_player` with the signing certificate SHA-1 of the
+  APK that you will actually install. Set up the OAuth consent screen with the
+  YouTube read-only scope and authorize test accounts where applicable.
+- Optionally set `YOUTUBE_API_KEY` to enable public music-video search without
+  a Google account. Restrict the key to YouTube Data API v3 and set a quota.
+  Treat build-time values embedded in the APK as publicly readable.
+
+Pass values as `--dart-define=NAME=value` to Flutter, or set the same names
+as repository variables for Android CI. Use a stable signing certificate for
+Google sign-in across builds. Results open in the
+provider's app or website. YouTube search covers public music videos, and the
+connected library covers YouTube playlists. Local playback works without
+provider configuration.
 
 ## Architecture
 
@@ -61,8 +89,7 @@ concerns described by [Metrolist](https://github.com/MetrolistGroup/Metrolist).
 Review the [YouTube developer policies](https://developers.google.com/youtube/terms/developer-policies)
 before shipping.
 
-**Status:** Catalog and login research only. Both upstream projects are
-GPL-3.0 and no code from either project has been imported.
+Both upstream projects are GPL-3.0. The implementation uses the official provider APIs.
 
 ## Providers to evaluate for lawful online audio
 

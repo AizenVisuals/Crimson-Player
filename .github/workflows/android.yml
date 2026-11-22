@@ -45,7 +45,17 @@ jobs:
         run: flutter test
 
       - name: Build Android preview APKs
-        run: flutter build apk --release --split-per-abi
+        env:
+          SPOTIFY_CLIENT_ID: ${{ vars.SPOTIFY_CLIENT_ID }}
+          SPOTIFY_PUBLIC_TOKEN_URL: ${{ vars.SPOTIFY_PUBLIC_TOKEN_URL }}
+          GOOGLE_SERVER_CLIENT_ID: ${{ vars.GOOGLE_SERVER_CLIENT_ID }}
+          YOUTUBE_API_KEY: ${{ vars.YOUTUBE_API_KEY }}
+        run: |
+          flutter build apk --release --split-per-abi \
+            --dart-define="SPOTIFY_CLIENT_ID=$SPOTIFY_CLIENT_ID" \
+            --dart-define="SPOTIFY_PUBLIC_TOKEN_URL=$SPOTIFY_PUBLIC_TOKEN_URL" \
+            --dart-define="GOOGLE_SERVER_CLIENT_ID=$GOOGLE_SERVER_CLIENT_ID" \
+            --dart-define="YOUTUBE_API_KEY=$YOUTUBE_API_KEY"
 
       - name: Upload test APK artifacts
         uses: actions/upload-artifact@v4

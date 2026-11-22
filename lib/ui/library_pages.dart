@@ -5,6 +5,7 @@ import '../models/music_track.dart';
 import '../services/local_library.dart';
 import '../services/music_player.dart';
 import 'app_theme.dart';
+import 'online_catalog_page.dart';
 import 'widgets/album_art.dart';
 import 'widgets/track_tile.dart';
 
@@ -506,6 +507,7 @@ class _SearchPageState extends State<SearchPage> {
                 ),
             const SizedBox(height: 30),
             const SectionHeader('Streaming'),
+            const OnlineCatalogLinks(),
             const SizedBox(height: 10),
             ListTile(
               onTap: openStreamDialog,
@@ -656,6 +658,9 @@ class SettingsPage extends StatelessWidget {
             subtitle: const Text('Abrir configurações do Android'),
             onTap: library.openPermissions,
           ),
+          const SizedBox(height: 23),
+          const SectionHeader('Contas de música'),
+          const OnlineCatalogLinks(),
           const SizedBox(height: 23),
           const SectionHeader('Sobre'),
           const SizedBox(height: 8),
