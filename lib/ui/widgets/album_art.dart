@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:on_audio_query_pluse/on_audio_query.dart';
+import 'package:flutter/services.dart';
 
 import '../../models/music_track.dart';
+import '../../services/local_library.dart';
 import '../app_theme.dart';
 
 /// Displays artwork embedded in the user's audio files.
@@ -29,16 +30,44 @@ class AlbumArt extends StatelessWidget {
         aspectRatio: 1,
         child: track?.artworkId == null
             ? fallback
-            : QueryArtworkWidget(
+            : _LocalArtwork(
+                key: ValueKey(track!.artworkId),
                 id: track!.artworkId!,
-                type: ArtworkType.AUDIO,
-                artworkBorder: BorderRadius.zero,
-                artworkFit: BoxFit.cover,
-                artworkHeight: double.infinity,
-                artworkWidth: double.infinity,
-                nullArtworkWidget: fallback,
+                fallback: fallback,
               ),
       ),
     );
   }
+}
+
+class _LocalArtwork extends StatefulWidget {
+  const _LocalArtwork({
+    required super.key,
+    required this.id,
+    required this.fallback,
+  });
+
+  final int id;
+  final Widget fallback;
+
+  @override
+  State<_LocalArtwork> createState() => _LocalArtworkState();
+}
+
+class _LocalArtworkState extends State<_LocalArtwork> {
+  late final Future<Uint8List?> _artwork = LocalLibrary.loadArtwork(widget.id);
+
+  @override
+  Widget build(BuildContext context) => FutureBuilder<Uint8List?>(
+        future: _artwork,
+        builder: (context, snapshot) {
+          final bytes = snapshot.data;
+          if (bytes == null || bytes.isEmpty) return widget.fallback;
+          return Image.memory(
+            bytes,
+            fit: BoxFit.cover,
+            errorBuilder: (context, error, stackTrace) => widget.fallback,
+          );
+        },
+      );
 }

@@ -12,7 +12,6 @@ dependencies:
   google_fonts: ^6.3.2
   media_kit: ^1.2.6
   media_kit_libs_audio: ^1.0.7
-  on_audio_query_pluse: ^3.0.7
   permission_handler: ^11.4.0
   device_info_plus: ^11.5.0
   shared_preferences: ^2.3.5

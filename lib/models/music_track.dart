@@ -1,5 +1,3 @@
-import 'package:on_audio_query_pluse/on_audio_query.dart';
-
 /// The UI and playback engine share the same track model for local and online audio.
 class MusicTrack {
   const MusicTrack({
@@ -22,17 +20,17 @@ class MusicTrack {
   final Duration? duration;
   final bool online;
 
-  factory MusicTrack.fromSong(SongModel song) {
+  factory MusicTrack.fromMediaStore(Map<Object?, Object?> song) {
+    final id = song['id'] as int;
+    final duration = song['duration'] as int?;
     return MusicTrack(
-      id: 'local:' + song.id.toString(),
-      title: song.title,
-      artist: _clean(song.artist, 'Artista desconhecido'),
-      album: _clean(song.album, 'Álbum desconhecido'),
-      uri: song.data,
-      artworkId: song.id,
-      duration: song.duration == null
-          ? null
-          : Duration(milliseconds: song.duration!),
+      id: 'local:$id',
+      title: _clean(song['title'] as String?, 'Título desconhecido'),
+      artist: _clean(song['artist'] as String?, 'Artista desconhecido'),
+      album: _clean(song['album'] as String?, 'Álbum desconhecido'),
+      uri: song['path'] as String,
+      artworkId: id,
+      duration: duration == null ? null : Duration(milliseconds: duration),
     );
   }
 
