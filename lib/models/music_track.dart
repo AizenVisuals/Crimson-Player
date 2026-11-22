@@ -1,4 +1,4 @@
-import 'package:on_audio_query/on_audio_query.dart';
+import 'package:on_audio_query_pluse/on_audio_query.dart';
 
 /// The UI and playback engine share the same track model for local and online audio.
 class MusicTrack {

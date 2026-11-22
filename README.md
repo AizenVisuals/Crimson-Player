@@ -18,7 +18,7 @@ Player de música multiplataforma **em desenvolvimento**. O nome é provisório.
 
 - Flutter / Dart
 - media_kit e media_kit_libs_audio
-- on_audio_query (MediaStore Android)
+- on_audio_query_pluse (MediaStore Android)
 - shared_preferences (favoritos)
 
 ## Executar
