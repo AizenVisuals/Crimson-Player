@@ -1,0 +1,44 @@
+name: Android Build
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Flutter SDK
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Generate Android host files
+        run: flutter create --platforms=android --org com.aizenvisuals .
+
+      - name: Dependencies
+        run: flutter pub get
+
+      - name: Analyze Dart
+        run: flutter analyze
+
+      - name: Widget tests
+        run: flutter test
+
+      - name: Build APK
+        run: flutter build apk --release --split-per-abi
+
+      - name: Publish APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: crimson-player-android-apk
+          path: build/app/outputs/flutter-apk/*.apk
+          if-no-files-found: error
