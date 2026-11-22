@@ -66,11 +66,17 @@ class _CrimsonShellState extends State<CrimsonShell> {
   }
 
   void showSettings() {
+    var selectedAppearance = widget.appearance;
     Navigator.of(context).push(MaterialPageRoute<void>(
-      builder: (_) => SettingsPage(
-        library: widget.library,
-        appearance: widget.appearance,
-        onAppearanceChanged: widget.onAppearanceChanged,
+      builder: (_) => StatefulBuilder(
+        builder: (context, setSettingsState) => SettingsPage(
+          library: widget.library,
+          appearance: selectedAppearance,
+          onAppearanceChanged: (mode) {
+            setSettingsState(() => selectedAppearance = mode);
+            widget.onAppearanceChanged(mode);
+          },
+        ),
       ),
     ));
   }
