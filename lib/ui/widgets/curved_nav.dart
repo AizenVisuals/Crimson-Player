@@ -74,11 +74,14 @@ class _CurvedNavState extends State<CurvedNav>
           builder: (context, _) {
             return Stack(
               children: [
-                Positioned.fill(
+                Positioned(
+                  left: (_position.value - .8) * cellWidth,
+                  width: cellWidth * 2.6,
+                  top: 0,
+                  bottom: 0,
                   child: IgnorePointer(
                     child: CustomPaint(
                       painter: _SelectionContour(
-                        center: (_position.value + .5) * cellWidth,
                         cellWidth: cellWidth,
                         color: accent,
                       ),
@@ -167,17 +170,16 @@ class _CurvedNavState extends State<CurvedNav>
 
 class _SelectionContour extends CustomPainter {
   const _SelectionContour({
-    required this.center,
     required this.cellWidth,
     required this.color,
   });
 
-  final double center;
   final double cellWidth;
   final Color color;
 
   @override
   void paint(Canvas canvas, Size size) {
+    final center = size.width / 2;
     final base = size.height - 5;
     final crest = 6.0;
     final spread = math.min(cellWidth * .65, 60.0);
@@ -215,7 +217,5 @@ class _SelectionContour extends CustomPainter {
 
   @override
   bool shouldRepaint(_SelectionContour oldDelegate) =>
-      center != oldDelegate.center ||
-      cellWidth != oldDelegate.cellWidth ||
-      color != oldDelegate.color;
+      cellWidth != oldDelegate.cellWidth || color != oldDelegate.color;
 }
