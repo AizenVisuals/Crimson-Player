@@ -1,0 +1,16 @@
+Crimson Player is a minimalist open-source music player, currently developed for Android.
+
+Features in the preview:
+• Play local audio files using the Media Kit engine.
+• Browse songs and albums found on your device.
+• Search local music, manage a playback queue and mark favorites.
+• Light, dark and automatic appearance.
+• Animated bottom navigation and a mini-player.
+• Open directly accessible HTTPS audio streams you have the right to use (experimental).
+
+The app does not provide a built-in Spotify or YouTube Music streaming catalog, nor does it download protected songs.
+
+Crimson Player is an early preview. Some functionality still requires on-device testing. Playlists, background controls, desktop support and online catalogs are planned.
+
+Source code: https://github.com/AizenVisuals/Crimson-Player
+License: GPL-3.0.

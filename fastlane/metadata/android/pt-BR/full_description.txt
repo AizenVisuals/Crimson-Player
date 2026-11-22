@@ -1,0 +1,16 @@
+Crimson Player é um reprodutor de músicas minimalista e de código aberto, inicialmente desenvolvido para Android.
+
+Recursos da prévia:
+• Reprodução de arquivos de áudio locais pelo motor Media Kit.
+• Biblioteca de músicas e álbuns encontrados no aparelho.
+• Busca local, fila de reprodução e favoritos.
+• Tema claro, escuro ou automático.
+• Navegação inferior animada e mini-player.
+• Reprodução experimental de links HTTPS diretos de áudio autorizados.
+
+O aplicativo não possui catálogo integrado de músicas do Spotify ou YouTube Music e não baixa conteúdo protegido.
+
+O Crimson Player ainda está em testes no Android. Playlists editáveis, controles em segundo plano, desktop e catálogos online estão planejados.
+
+Código-fonte: https://github.com/AizenVisuals/Crimson-Player
+Licença: GPL-3.0.

@@ -1,0 +1,42 @@
+name: Bug report
+description: Report a reproducible problem in Crimson Player
+title: "[Bug] "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: "Don't post passwords, private stream links, OAuth tokens or personal files. Confirm which app produced the error."
+  - type: dropdown
+    id: app
+    attributes:
+      label: Which app produced the error?
+      options:
+        - Crimson Player
+        - Orpheon
+        - Metrolist
+        - Other / unknown
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: App version and APK
+      placeholder: "e.g. Crimson Player v0.2.0 arm64"
+    validations:
+      required: true
+  - type: input
+    id: android
+    attributes:
+      label: Android version and device
+      placeholder: "e.g. Android 13 ARM64"
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce and expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Redacted logs and screenshot
+      description: Remove identifying data and account secrets first.
