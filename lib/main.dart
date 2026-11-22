@@ -1,7 +1,12 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:media_kit/media_kit.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 import 'services/local_library.dart';
 import 'services/music_player.dart';
+import 'ui/app_theme.dart';
 import 'ui/crimson_shell.dart';
 
 void main() {
@@ -20,13 +25,32 @@ class CrimsonApp extends StatefulWidget {
 class _CrimsonAppState extends State<CrimsonApp> {
   late final LocalLibrary library;
   late final MusicPlayer player;
+  ThemeMode _mode = ThemeMode.system;
 
   @override
   void initState() {
     super.initState();
     library = LocalLibrary();
     player = MusicPlayer();
-    library.refresh();
+    unawaited(_loadTheme());
+    unawaited(library.refresh());
+  }
+
+  Future<void> _loadTheme() async {
+    final prefs = await SharedPreferences.getInstance();
+    if (!mounted) return;
+    final saved = prefs.getString('appearance') ?? 'system';
+    setState(() => _mode = switch (saved) {
+      'light' => ThemeMode.light,
+      'dark' => ThemeMode.dark,
+      _ => ThemeMode.system,
+    });
+  }
+
+  Future<void> _changeTheme(ThemeMode mode) async {
+    setState(() => _mode = mode);
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('appearance', mode.name);
   }
 
   @override
@@ -41,20 +65,15 @@ class _CrimsonAppState extends State<CrimsonApp> {
     return MaterialApp(
       title: 'Crimson Player',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        useMaterial3: true,
-        scaffoldBackgroundColor: const Color(0xFFFDFDFD),
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xFFD51A32),
-          surface: const Color(0xFFFDFDFD),
-        ),
-        fontFamily: 'Roboto',
-        appBarTheme: const AppBarTheme(
-          backgroundColor: Color(0xFFFDFDFD),
-          elevation: 0,
-        ),
+      theme: AppTheme.light(),
+      darkTheme: AppTheme.dark(),
+      themeMode: _mode,
+      home: CrimsonShell(
+        library: library,
+        player: player,
+        appearance: _mode,
+        onAppearanceChanged: _changeTheme,
       ),
-      home: CrimsonShell(library: library, player: player),
     );
   }
 }

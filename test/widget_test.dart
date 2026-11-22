@@ -3,7 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:crimson_player/ui/widgets/album_art.dart';
 
 void main() {
-  testWidgets('A capa alternativa é renderizada sem arquivos de áudio', (tester) async {
+  testWidgets('Sem capa de música não inventa arte de álbum', (tester) async {
     await tester.pumpWidget(const MaterialApp(
       home: Scaffold(
         body: Center(
@@ -12,5 +12,7 @@ void main() {
       ),
     ));
     expect(find.byType(AlbumArt), findsOneWidget);
+    expect(find.byIcon(Icons.music_note_rounded), findsOneWidget);
+    expect(find.byType(CustomPaint), findsNothing);
   });
 }

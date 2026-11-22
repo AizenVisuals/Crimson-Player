@@ -5,13 +5,21 @@ import '../services/local_library.dart';
 import '../services/music_player.dart';
 import 'library_pages.dart';
 import 'now_playing_page.dart';
-import 'widgets/curved_nav.dart';
-import 'widgets/mini_player.dart';
+import 'widgets/player_navigation_bar.dart';
 
 class CrimsonShell extends StatefulWidget {
-  const CrimsonShell({super.key, required this.library, required this.player});
+  const CrimsonShell({
+    super.key,
+    required this.library,
+    required this.player,
+    required this.appearance,
+    required this.onAppearanceChanged,
+  });
+
   final LocalLibrary library;
   final MusicPlayer player;
+  final ThemeMode appearance;
+  final ValueChanged<ThemeMode> onAppearanceChanged;
 
   @override
   State<CrimsonShell> createState() => _CrimsonShellState();
@@ -20,38 +28,42 @@ class CrimsonShell extends StatefulWidget {
 class _CrimsonShellState extends State<CrimsonShell> {
   int tab = 0;
 
-  Future<void> playTrack(MusicTrack song, List<MusicTrack> queue) async {
-    await widget.player.open(song, fromQueue: queue);
+  Future<void> playTrack(MusicTrack track, List<MusicTrack> tracks) async {
+    await widget.player.open(track, fromQueue: tracks);
     if (mounted) showNowPlaying();
   }
 
   void showNowPlaying() {
-    Navigator.push(
-      context,
-      MaterialPageRoute<void>(
-        builder: (_) => NowPlayingPage(
-          player: widget.player,
-          onSelectTab: (index) {
-            Navigator.pop(context);
-            setState(() => tab = index);
-          },
-        ),
+    Navigator.of(context).push(MaterialPageRoute<void>(
+      builder: (_) => NowPlayingPage(
+        player: widget.player,
+        onSelectTab: (index) {
+          Navigator.pop(context);
+          setState(() => tab = index);
+        },
       ),
-    );
+    ));
   }
 
-  void showAlbum(String name, List<MusicTrack> songs) {
-    Navigator.push(
-      context,
-      MaterialPageRoute<void>(
-        builder: (_) => AlbumPage(
-          name: name,
-          tracks: songs,
-          player: widget.player,
-          onPlay: (track) => playTrack(track, songs),
-        ),
+  void showAlbum(String name, List<MusicTrack> tracks) {
+    Navigator.of(context).push(MaterialPageRoute<void>(
+      builder: (_) => AlbumPage(
+        name: name,
+        tracks: tracks,
+        player: widget.player,
+        onPlay: (track) => playTrack(track, tracks),
       ),
-    );
+    ));
+  }
+
+  void showSettings() {
+    Navigator.of(context).push(MaterialPageRoute<void>(
+      builder: (_) => SettingsPage(
+        library: widget.library,
+        appearance: widget.appearance,
+        onAppearanceChanged: widget.onAppearanceChanged,
+      ),
+    ));
   }
 
   @override
@@ -63,16 +75,24 @@ class _CrimsonShellState extends State<CrimsonShell> {
         onPlay: playTrack,
         onOpenAlbum: showAlbum,
         onOpenLibrary: () => setState(() => tab = 2),
+        onSettings: showSettings,
       ),
-      SearchPage(library: widget.library, player: widget.player, onPlay: playTrack),
+      SearchPage(
+        library: widget.library,
+        player: widget.player,
+        onPlay: playTrack,
+      ),
       LibraryPage(
         library: widget.library,
         player: widget.player,
         onPlay: playTrack,
         onOpenAlbum: showAlbum,
       ),
-      FavoritesPage(library: widget.library, player: widget.player, onPlay: playTrack),
-      SettingsPage(library: widget.library),
+      FavoritesPage(
+        library: widget.library,
+        player: widget.player,
+        onPlay: playTrack,
+      ),
     ];
 
     return Scaffold(
@@ -80,15 +100,11 @@ class _CrimsonShellState extends State<CrimsonShell> {
         bottom: false,
         child: IndexedStack(index: tab, children: screens),
       ),
-      bottomNavigationBar: SafeArea(
-        top: false,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            MiniPlayer(player: widget.player, onOpen: showNowPlaying),
-            CurvedNav(index: tab, onChanged: (value) => setState(() => tab = value)),
-          ],
-        ),
+      bottomNavigationBar: PlayerNavigationBar(
+        index: tab,
+        player: widget.player,
+        onOpenPlayer: showNowPlaying,
+        onChanged: (index) => setState(() => tab = index),
       ),
     );
   }

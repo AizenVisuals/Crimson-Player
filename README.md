@@ -1,65 +1,45 @@
 # Crimson Player
 
-Player de música multiplataforma **em desenvolvimento**. O nome é provisório.
+Reprodutor de músicas Android e desktop (desktop planejado). **Crimson Player é nome provisório.**
 
-## Objetivo atual: Android primeiro
+## Android Preview v0.2.0
 
-- Interface minimalista clara baseada nas referências aprovadas, com navegação flutuante grafite e animação carmesim.
-- Início, Busca, Biblioteca, Favoritos/Fila e Ajustes.
-- Tela **Now Playing** com capa, barra de progresso em forma de onda, controles, fila e mini-player persistente.
-- Pesquisa de músicas locais com permissão de áudio no Android.
-- Reprodução local via Media Kit.
-- Reprodução HTTPS de áudio/streams diretos autorizados, informando a URL.
-- Favoritos salvos no dispositivo.
+O app é construído em Flutter e segue as referências visuais aprovadas: interface minimalista com **temas claro e escuro**, tipografia Inter, telas de álbum/Now Playing e navegação inferior com **animação efetiva**.
 
-**Ainda não implementados:** catálogo online por artista (Audius/Jamendo etc.), login, playlists editáveis/sincronizadas, downloads, notificações/controles lockscreen, exibição real do waveform extraído do áudio, interface de desktop.
+Funcionalidades presentes:
+- Biblioteca local Android via MediaStore, solicitando permissão de áudio conforme a versão do sistema.
+- Exibição de capas reais extraídas dos arquivos; ausência de capa tem apenas um marcador neutro.
+- Reprodução local MP3/FLAC e formatos suportados pelo Media Kit.
+- Busca em músicas locais, lista de álbuns, fila, favoritas persistentes.
+- Play/pause, próxima, anterior, aleatório, repetição, progresso real e seek.
+- Mini-player integrado ao dock de navegação.
+- Temas claro, escuro e automático, com preferência salva.
+- Reprodução por link HTTPS direto e autorizado (experimental).
 
-## Tecnologias
+Limitações: catálogo online pesquisável ainda não integrado; sem Spotify; playlists editáveis e controles de notificação/tela bloqueada ainda pendentes. Não há waveform extraída do áudio — o controle atual é uma barra precisa, sem dados visuais inventados.
 
-- Flutter / Dart
-- media_kit e media_kit_libs_audio
-- on_audio_query_pluse (MediaStore Android)
-- shared_preferences (favoritos)
+## Instalação
 
-## Executar
+Baixe a versão Android pela seção [Releases](https://github.com/AizenVisuals/Crimson-Player/releases), não pelos commits.
 
-Requer Flutter e Android SDK instalados.
+Para Android ARM64, use `app-arm64-v8a-release.apk`.
+
+## Desenvolvimento
+
+Requer Flutter SDK e Android SDK.
 
 ```bash
 git clone https://github.com/AizenVisuals/Crimson-Player.git
 cd Crimson-Player
 flutter create --platforms=android --org com.aizenvisuals .
 flutter pub get
-flutter run
+flutter analyze --no-fatal-infos
+flutter test
+flutter build apk --release --split-per-abi
 ```
 
-O AndroidManifest já define INTERNET, READ_MEDIA_AUDIO e READ_EXTERNAL_STORAGE até API 32. A permissão é solicitada durante a leitura da biblioteca.
+A compilação automática usa GitHub Actions. Quando análise, testes e build passam, publica a prévia na seção Releases.
 
-Para gerar APKs:
+## Documentação visual
 
-```bash
-flutter build apk --split-per-abi
-```
-
-O workflow **Android Build** do GitHub Actions prepara automaticamente os arquivos Android gerados pelo Flutter durante o build e publica o APK como artefato quando a compilação passa.
-
-## Nota sobre as fontes online
-
-O player não integra Spotify nem burla acesso a conteúdo protegido. No MVP, apenas links diretos HTTPS autorizados são reproduzidos. Catálogos que oferecem API/licenças compatíveis serão avaliados posteriormente.
-
-## Arquitetura
-
-```
-lib/
-  main.dart                  # bootstrap e tema
-  models/music_track.dart    # modelo unificado
-  services/local_library.dart # MediaStore / permissões
-  services/music_player.dart  # engine, fila, favoritos
-  ui/
-    crimson_shell.dart       # navegação e mini-player
-    library_pages.dart       # início, busca, biblioteca, álbum...
-    now_playing_page.dart
-    widgets/                 # assets de UI em Flutter
-```
-
-Design: fundo branco e tipografia escura, capa grande, contornos arredondados e detalhes carmesim. A versão desktop fica para a próxima fase.
+Consulte [DESIGN.md](DESIGN.md). Não criar capas, imagens ou formas de onda inventadas por código; use fontes reais ou marcadores honestos.

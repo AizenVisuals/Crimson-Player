@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+
 import '../../models/music_track.dart';
 import '../../services/music_player.dart';
-import 'album_art.dart';
-import 'curved_nav.dart';
+import '../app_theme.dart';
 
 class TrackTile extends StatelessWidget {
   const TrackTile({
@@ -12,6 +12,7 @@ class TrackTile extends StatelessWidget {
     required this.onTap,
     this.index,
   });
+
   final MusicTrack track;
   final MusicPlayer player;
   final VoidCallback onTap;
@@ -19,38 +20,86 @@ class TrackTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      contentPadding: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
-      leading: index == null
-          ? SizedBox(width: 54, child: AlbumArt(track: track, radius: 13))
-          : SizedBox(
-              width: 36,
-              child: Center(child: Text(
-                (index! + 1).toString().padLeft(2, '0'),
-                style: const TextStyle(color: Color(0xFF777B83), fontSize: 13),
-              )),
-            ),
-      title: Text(track.title,
-        maxLines: 1,
-        overflow: TextOverflow.ellipsis,
-        style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 14)),
-      subtitle: Text(track.artist,
-        maxLines: 1,
-        overflow: TextOverflow.ellipsis,
-        style: const TextStyle(color: Color(0xFF92969D), fontSize: 12)),
-      trailing: AnimatedBuilder(
-        animation: player,
-        builder: (context, _) => IconButton(
-          tooltip: player.isFavorite(track) ? 'Remover favorito' : 'Favoritar',
-          onPressed: () => player.toggleFavorite(track),
-          icon: Icon(
-            player.isFavorite(track) ? Icons.favorite : Icons.favorite_border,
-            size: 20,
-            color: player.isFavorite(track) ? crimson : const Color(0xFFB5B7BC),
+    return AnimatedBuilder(
+      animation: player,
+      builder: (context, _) {
+        final selected = player.current?.id == track.id;
+        return AnimatedContainer(
+          duration: const Duration(milliseconds: 240),
+          decoration: BoxDecoration(
+            color: selected ? context.subtle : Colors.transparent,
+            borderRadius: BorderRadius.circular(15),
           ),
-        ),
-      ),
-      onTap: onTap,
+          child: ListTile(
+            minVerticalPadding: 4,
+            minLeadingWidth: 36,
+            contentPadding: const EdgeInsets.symmetric(horizontal: 7),
+            leading: SizedBox(
+              width: 35,
+              child: Center(
+                child: selected
+                    ? Icon(
+                        Icons.graphic_eq_rounded,
+                        size: 19,
+                        color: context.ink,
+                      )
+                    : Text(
+                        index == null
+                            ? '♪'
+                            : (index! + 1).toString().padLeft(2, '0'),
+                        style: TextStyle(
+                          fontSize: index == null ? 17 : 12,
+                          fontWeight: FontWeight.w500,
+                          color: context.muted,
+                        ),
+                      ),
+              ),
+            ),
+            title: Text(
+              track.title,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                fontSize: 13,
+                color: context.ink,
+                fontWeight: selected ? FontWeight.w700 : FontWeight.w600,
+              ),
+            ),
+            subtitle: Text(
+              track.artist,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(fontSize: 11, color: context.muted),
+            ),
+            trailing: PopupMenuButton<String>(
+              tooltip: 'Opções da música',
+              icon: Icon(Icons.more_horiz_rounded,
+                size: 20, color: context.muted),
+              onSelected: (value) {
+                if (value == 'favorite') player.toggleFavorite(track);
+              },
+              itemBuilder: (context) => [
+                PopupMenuItem(
+                  value: 'favorite',
+                  child: Row(children: [
+                    Icon(
+                      player.isFavorite(track)
+                          ? Icons.favorite_rounded
+                          : Icons.favorite_border_rounded,
+                      size: 18,
+                    ),
+                    const SizedBox(width: 10),
+                    Text(player.isFavorite(track)
+                        ? 'Remover dos favoritos'
+                        : 'Adicionar aos favoritos'),
+                  ]),
+                ),
+              ],
+            ),
+            onTap: onTap,
+          ),
+        );
+      },
     );
   }
 }
