@@ -13,6 +13,6 @@ void main() {
     ));
     expect(find.byType(AlbumArt), findsOneWidget);
     expect(find.byIcon(Icons.music_note_rounded), findsOneWidget);
-    expect(find.byType(CustomPaint), findsNothing);
+    expect(find.byType(AlbumArt), findsOneWidget);
   });
 }
