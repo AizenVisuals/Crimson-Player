@@ -24,6 +24,11 @@ class TrackTile extends StatelessWidget {
       animation: player,
       builder: (context, _) {
         final selected = player.current?.id == track.id;
+        final duration = track.duration;
+        final details = duration == null || duration <= Duration.zero
+            ? track.artist
+            : '${track.artist} · ${duration.inMinutes}:'
+                '${(duration.inSeconds % 60).toString().padLeft(2, '0')}';
         return AnimatedContainer(
           duration: const Duration(milliseconds: 240),
           decoration: BoxDecoration(
@@ -66,7 +71,7 @@ class TrackTile extends StatelessWidget {
               ),
             ),
             subtitle: Text(
-              track.artist,
+              details,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: TextStyle(fontSize: 11, color: context.muted),

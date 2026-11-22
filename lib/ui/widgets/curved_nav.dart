@@ -1,9 +1,9 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import '../app_theme.dart';
 
-/// Animated navigation selector.
-/// The active capsule travels between destinations under AnimationController,
-/// while the selected icon gently scales and fades into its filled variant.
+/// Pill-shaped navigation with a contour that follows the selected tab.
 class CurvedNav extends StatefulWidget {
   const CurvedNav({
     super.key,
@@ -49,10 +49,7 @@ class _CurvedNavState extends State<CurvedNav>
       _position = Tween<double>(
         begin: start,
         end: widget.index.toDouble(),
-      ).animate(CurvedAnimation(
-        parent: _controller,
-        curve: Curves.easeInOutCubic,
-      ));
+      ).chain(CurveTween(curve: Curves.easeInOutCubic)).animate(_controller);
       _controller.forward();
     }
   }
@@ -67,6 +64,7 @@ class _CurvedNavState extends State<CurvedNav>
   Widget build(BuildContext context) {
     final ink = context.ink;
     final muted = context.muted;
+    final accent = context.isDark ? const Color(0xFFF17386) : ink;
     return SizedBox(
       height: 72,
       child: LayoutBuilder(builder: (context, constraints) {
@@ -76,17 +74,14 @@ class _CurvedNavState extends State<CurvedNav>
           builder: (context, _) {
             return Stack(
               children: [
-                Positioned(
-                  left: (_position.value * cellWidth) + cellWidth * .15,
-                  top: 5,
-                  width: cellWidth * .7,
-                  height: 57,
-                  child: DecoratedBox(
-                    decoration: BoxDecoration(
-                      color: context.raised.withValues(
-                        alpha: context.isDark ? .85 : .58,
+                Positioned.fill(
+                  child: IgnorePointer(
+                    child: CustomPaint(
+                      painter: _SelectionContour(
+                        center: (_position.value + .5) * cellWidth,
+                        cellWidth: cellWidth,
+                        color: accent,
                       ),
-                      borderRadius: BorderRadius.circular(18),
                     ),
                   ),
                 ),
@@ -104,28 +99,38 @@ class _CurvedNavState extends State<CurvedNav>
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                AnimatedScale(
-                                  scale: widget.index == i ? 1.13 : 1,
+                                AnimatedSlide(
+                                  offset: widget.index == i
+                                      ? const Offset(0, -.15)
+                                      : Offset.zero,
                                   duration: const Duration(milliseconds: 300),
-                                  curve: Curves.easeOutBack,
-                                  child: AnimatedSwitcher(
-                                    duration: const Duration(milliseconds: 240),
-                                    switchInCurve: Curves.easeOutCubic,
-                                    transitionBuilder: (child, animation) =>
-                                        FadeTransition(
-                                      opacity: animation,
-                                      child: ScaleTransition(
-                                        scale: animation,
-                                        child: child,
+                                  curve: Curves.easeOutCubic,
+                                  child: AnimatedScale(
+                                    scale: widget.index == i ? 1.13 : 1,
+                                    duration: const Duration(milliseconds: 300),
+                                    curve: Curves.easeOutBack,
+                                    child: AnimatedSwitcher(
+                                      duration:
+                                          const Duration(milliseconds: 240),
+                                      switchInCurve: Curves.easeOutCubic,
+                                      transitionBuilder: (child, animation) =>
+                                          FadeTransition(
+                                        opacity: animation,
+                                        child: ScaleTransition(
+                                          scale: animation,
+                                          child: child,
+                                        ),
                                       ),
-                                    ),
-                                    child: Icon(
-                                      widget.index == i
-                                          ? CurvedNav.items[i].$2
-                                          : CurvedNav.items[i].$1,
-                                      key: ValueKey('nav-$i-${widget.index == i}'),
-                                      color: widget.index == i ? ink : muted,
-                                      size: 21,
+                                      child: Icon(
+                                        widget.index == i
+                                            ? CurvedNav.items[i].$2
+                                            : CurvedNav.items[i].$1,
+                                        key: ValueKey(
+                                            'nav-$i-${widget.index == i}'),
+                                        color:
+                                            widget.index == i ? accent : muted,
+                                        size: 21,
+                                      ),
                                     ),
                                   ),
                                 ),
@@ -158,4 +163,59 @@ class _CurvedNavState extends State<CurvedNav>
       }),
     );
   }
+}
+
+class _SelectionContour extends CustomPainter {
+  const _SelectionContour({
+    required this.center,
+    required this.cellWidth,
+    required this.color,
+  });
+
+  final double center;
+  final double cellWidth;
+  final Color color;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final base = size.height - 5;
+    final crest = 6.0;
+    final spread = math.min(cellWidth * .65, 60.0);
+    final shoulder = spread * .48;
+    final path = Path()
+      ..moveTo(0, base)
+      ..lineTo(center - spread, base)
+      ..cubicTo(
+        center - shoulder,
+        base,
+        center - spread,
+        crest,
+        center,
+        crest,
+      )
+      ..cubicTo(
+        center + spread,
+        crest,
+        center + shoulder,
+        base,
+        center + spread,
+        base,
+      )
+      ..lineTo(size.width, base);
+    final paint = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 2
+      ..strokeCap = StrokeCap.round
+      ..shader = LinearGradient(
+        colors: [Colors.transparent, color, Colors.transparent],
+      ).createShader(
+          Rect.fromLTRB(center - spread * 2, 0, center + spread * 2, base));
+    canvas.drawPath(path, paint);
+  }
+
+  @override
+  bool shouldRepaint(_SelectionContour oldDelegate) =>
+      center != oldDelegate.center ||
+      cellWidth != oldDelegate.cellWidth ||
+      color != oldDelegate.color;
 }

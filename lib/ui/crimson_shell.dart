@@ -33,14 +33,17 @@ class _CrimsonShellState extends State<CrimsonShell> {
     if (mounted) showNowPlaying();
   }
 
+  void selectTab(int index) {
+    final shellRoute = ModalRoute.of(context);
+    Navigator.of(context).popUntil((route) => route == shellRoute || route.isFirst);
+    setState(() => tab = index);
+  }
+
   void showNowPlaying() {
     Navigator.of(context).push(MaterialPageRoute<void>(
       builder: (_) => NowPlayingPage(
         player: widget.player,
-        onSelectTab: (index) {
-          Navigator.pop(context);
-          setState(() => tab = index);
-        },
+        onSelectTab: selectTab,
       ),
     ));
   }
@@ -51,7 +54,13 @@ class _CrimsonShellState extends State<CrimsonShell> {
         name: name,
         tracks: tracks,
         player: widget.player,
-        onPlay: (track) => playTrack(track, tracks),
+        onPlay: (track) => widget.player.open(track, fromQueue: tracks),
+        bottomNavigationBar: PlayerNavigationBar(
+          index: 2,
+          player: widget.player,
+          onOpenPlayer: showNowPlaying,
+          onChanged: selectTab,
+        ),
       ),
     ));
   }

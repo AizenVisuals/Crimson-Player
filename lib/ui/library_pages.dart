@@ -677,17 +677,20 @@ class AlbumPage extends StatelessWidget {
     required this.tracks,
     required this.player,
     required this.onPlay,
+    required this.bottomNavigationBar,
   });
 
   final String name;
   final List<MusicTrack> tracks;
   final MusicPlayer player;
   final Future<void> Function(MusicTrack) onPlay;
+  final Widget bottomNavigationBar;
 
   @override
   Widget build(BuildContext context) {
     final artist = tracks.isEmpty ? 'Artista desconhecido' : tracks.first.artist;
     return Scaffold(
+      bottomNavigationBar: bottomNavigationBar,
       appBar: AppBar(
         leading: IconButton(
           tooltip: 'Voltar',
@@ -704,7 +707,7 @@ class AlbumPage extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 SizedBox(
-                  width: 124,
+                  width: 114,
                   child: AlbumArt(
                     track: tracks.isEmpty ? null : tracks.first,
                     radius: 18,

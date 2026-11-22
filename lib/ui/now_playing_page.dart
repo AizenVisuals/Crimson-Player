@@ -80,7 +80,7 @@ class NowPlayingPage extends StatelessWidget {
             : (player.position.inMilliseconds / duration.inMilliseconds)
                 .clamp(0.0, 1.0).toDouble();
         final size = MediaQuery.sizeOf(context);
-        final artworkSize = math.min(size.width - 92, 312.0);
+        final artworkSize = math.min(size.width * .74, 312.0);
 
         return Scaffold(
           appBar: AppBar(
@@ -108,7 +108,20 @@ class NowPlayingPage extends StatelessWidget {
                 children: [
                   Center(child: SizedBox(
                     width: artworkSize,
-                    child: AlbumArt(track: song, radius: 23),
+                    child: DecoratedBox(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(24),
+                        boxShadow: [
+                          BoxShadow(
+                            color: (context.isDark ? Colors.white : Colors.black)
+                                .withValues(alpha: song?.artworkId == null ? 0 : .22),
+                            blurRadius: 34,
+                            offset: const Offset(0, 13),
+                          ),
+                        ],
+                      ),
+                      child: AlbumArt(track: song, radius: 24),
+                    ),
                   )),
                   const SizedBox(height: 29),
                   Row(
@@ -133,7 +146,7 @@ class NowPlayingPage extends StatelessWidget {
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
                             style: TextStyle(
-                              fontSize: 22,
+                              fontSize: 24,
                               fontWeight: FontWeight.w700,
                               color: context.ink,
                               height: 1.22,
@@ -198,7 +211,7 @@ class NowPlayingPage extends StatelessWidget {
                           boxShadow: [BoxShadow(
                             blurRadius: 16,
                             offset: const Offset(0, 8),
-                            color: Colors.black.withValues(alpha: .10),
+                            color: context.ink.withValues(alpha: .18),
                           )],
                         ),
                         child: SizedBox(
