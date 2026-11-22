@@ -26,30 +26,26 @@ class PlayerNavigationBar extends StatelessWidget {
     return SafeArea(
       top: false,
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(12, 3, 12, 5),
-        child: DecoratedBox(
-          decoration: BoxDecoration(
-            color: context.canvas,
-            borderRadius: BorderRadius.circular(26),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: context.isDark ? .15 : .07),
-                offset: const Offset(0, -2),
-                blurRadius: 18,
+        padding: const EdgeInsets.fromLTRB(14, 3, 14, 6),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (player != null && onOpenPlayer != null)
+              MiniPlayer(player: player!, onOpen: onOpenPlayer!),
+            Material(
+              color: context.isDark
+                  ? const Color(0xFF861832)
+                  : const Color(0xFFB51232),
+              elevation: 5,
+              shadowColor: Colors.black.withValues(alpha: .2),
+              shape: const StadiumBorder(),
+              clipBehavior: Clip.antiAlias,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 6),
+                child: CurvedNav(index: index, onChanged: onChanged),
               ),
-            ],
-          ),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(26),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                if (player != null && onOpenPlayer != null)
-                  MiniPlayer(player: player!, onOpen: onOpenPlayer!),
-                CurvedNav(index: index, onChanged: onChanged),
-              ],
             ),
-          ),
+          ],
         ),
       ),
     );

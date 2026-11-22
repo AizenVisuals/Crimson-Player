@@ -25,7 +25,7 @@ class CrimsonApp extends StatefulWidget {
 class _CrimsonAppState extends State<CrimsonApp> {
   late final LocalLibrary library;
   late final MusicPlayer player;
-  ThemeMode _mode = ThemeMode.system;
+  ThemeMode _mode = ThemeMode.light;
 
   @override
   void initState() {
@@ -39,7 +39,7 @@ class _CrimsonAppState extends State<CrimsonApp> {
   Future<void> _loadTheme() async {
     final prefs = await SharedPreferences.getInstance();
     if (!mounted) return;
-    final saved = prefs.getString('appearance') ?? 'system';
+    final saved = prefs.getString('appearance') ?? 'light';
     setState(() => _mode = switch (saved) {
       'light' => ThemeMode.light,
       'dark' => ThemeMode.dark,

@@ -92,9 +92,11 @@ class MiniPlayer extends StatelessWidget {
                         backgroundColor: foreground,
                         foregroundColor: background,
                         minimumSize: const Size(40, 40),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(14),
-                        ),
+                        shape: context.isDark
+                            ? const CircleBorder()
+                            : RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(14),
+                              ),
                       ),
                       icon: AnimatedSwitcher(
                         duration: const Duration(milliseconds: 180),

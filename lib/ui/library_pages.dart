@@ -5,6 +5,7 @@ import '../models/music_track.dart';
 import '../services/local_library.dart';
 import '../services/music_player.dart';
 import 'app_theme.dart';
+import 'online_catalog_page.dart';
 import 'widgets/album_art.dart';
 import 'widgets/track_tile.dart';
 
@@ -506,6 +507,7 @@ class _SearchPageState extends State<SearchPage> {
                 ),
             const SizedBox(height: 30),
             const SectionHeader('Streaming'),
+            const OnlineCatalogLinks(),
             const SizedBox(height: 10),
             ListTile(
               onTap: openStreamDialog,
@@ -657,6 +659,9 @@ class SettingsPage extends StatelessWidget {
             onTap: library.openPermissions,
           ),
           const SizedBox(height: 23),
+          const SectionHeader('Contas de música'),
+          const OnlineCatalogLinks(),
+          const SizedBox(height: 23),
           const SectionHeader('Sobre'),
           const SizedBox(height: 8),
           Text('Crimson Player · Prévia Android v0.2.0',
@@ -677,17 +682,20 @@ class AlbumPage extends StatelessWidget {
     required this.tracks,
     required this.player,
     required this.onPlay,
+    required this.bottomNavigationBar,
   });
 
   final String name;
   final List<MusicTrack> tracks;
   final MusicPlayer player;
   final Future<void> Function(MusicTrack) onPlay;
+  final Widget bottomNavigationBar;
 
   @override
   Widget build(BuildContext context) {
     final artist = tracks.isEmpty ? 'Artista desconhecido' : tracks.first.artist;
     return Scaffold(
+      bottomNavigationBar: bottomNavigationBar,
       appBar: AppBar(
         leading: IconButton(
           tooltip: 'Voltar',
@@ -704,7 +712,7 @@ class AlbumPage extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 SizedBox(
-                  width: 124,
+                  width: 114,
                   child: AlbumArt(
                     track: tracks.isEmpty ? null : tracks.first,
                     radius: 18,
